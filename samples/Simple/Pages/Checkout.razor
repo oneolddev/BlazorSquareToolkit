@@ -54,7 +54,7 @@
             if (r != null && r.IsValid())
             {
                 var card = r.Details?.Card!;
-                ProcessingMessage = $"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpMonth} and Ending in {card.Last4}";
+                ProcessingMessage = $"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpYear} and Ending in {card.Last4}";
                 StateHasChanged();
                 await Task.Delay(5000);
                 state = CheckoutState.Paid;
