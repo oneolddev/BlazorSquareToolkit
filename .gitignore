@@ -348,4 +348,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-/sample/BlazorApp1/wwwroot/appsettings.Development.json
+/samples/Simple/wwwroot/appsettings.Development.json
