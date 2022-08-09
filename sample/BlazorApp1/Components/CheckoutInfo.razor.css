@@ -1,0 +1,19 @@
+﻿#checkout-info {
+    border: 1px solid lightgray;
+    padding: 0.5em;
+    border-radius: 5px;
+}
+
+    #checkout-info > div {
+        text-align: right;
+        padding: 0 1em;
+    }
+
+        #checkout-info > div div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+hr {
+    margin: 0.2em;
+}

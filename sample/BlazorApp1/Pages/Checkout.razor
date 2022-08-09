@@ -1,8 +1,84 @@
 ﻿@page "/checkout"
-<h3>Checkout</h3>
+@using System.ComponentModel.DataAnnotations
+@using BlazorApp1.Components
+@using BlazorSquareToolkit
 
-<BlazorSquareToolkit.Component1></BlazorSquareToolkit.Component1>
+<h3>Checkout</h3>
+<div id="checkout">
+    @if (state == CheckoutState.Unpaid)
+    {
+        <CheckoutInfo></CheckoutInfo>
+        <EditForm Model="@paymentFormData" OnSubmit="@HandleSubmit">
+            <div>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <InputSquarePayment @ref="inputSquarePayment" @bind-Value="paymentFormData.Nonce" />
+
+            </div>
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </EditForm>
+    }
+    else if (state == CheckoutState.Processing)
+    {
+        <div>
+            <div>Processing</div>
+            <div>
+                <div class="spinner-border"></div>
+            </div>
+            <div>@ProcessingMessage</div>
+        </div>
+    }
+    else
+    {
+        <div>
+            <div>Paid</div>
+        </div>
+    }
+</div>
 
 @code {
+    enum CheckoutState { Unpaid, Processing, Paid };
+    CheckoutState state = CheckoutState.Unpaid;
 
+    InputSquarePayment inputSquarePayment = default!;
+
+    public string ProcessingMessage { get; set; } = string.Empty;
+
+    async Task HandleSubmit(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            state = CheckoutState.Processing;
+            var r = await inputSquarePayment.Tokenize();
+            if (r != null && r.IsValid())
+            {
+                var card = r.Details?.Card!;
+                ProcessingMessage = $"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpMonth} and Ending in {card.Last4}";
+                StateHasChanged();
+                await Task.Delay(5000);
+                state = CheckoutState.Paid;
+            }
+            else
+            {
+                state = CheckoutState.Unpaid;
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    PaymentFormData paymentFormData = new();
+
+    public class PaymentFormData
+    {
+        //[Required]
+        //[StringLength(10, ErrorMessage = "Name must be between 2 and 10 characters.", MinimumLength = 2)]
+        //public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Card information must be completed.")]
+        public string Nonce { get; set; } = string.Empty;
+    }
 }

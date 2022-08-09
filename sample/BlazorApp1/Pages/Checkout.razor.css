@@ -1,0 +1,24 @@
+﻿#checkout {
+    margin: auto;
+    max-width: 32em;
+}
+
+    #checkout > form > div {
+        padding: 0.5em 0 0.5em 0;
+        margin: auto;
+    }
+
+    #checkout > form > button {
+        margin: 0 auto;
+        display: block;
+    }
+
+    #checkout > div {
+        border: 1px solid lightgray;
+        padding: 0.5em;
+    }
+
+        #checkout > div > div {
+            margin: 5px auto;
+            text-align: center;
+        }
