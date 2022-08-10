@@ -1,4 +1,4 @@
-using BlazorApp1;
+using Simple;
 using BlazorSquareToolkit;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
