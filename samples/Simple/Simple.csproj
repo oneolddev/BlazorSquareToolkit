@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\BlazorSquareToolkit\BlazorSquareToolkit.csproj" />
+    <ProjectReference Include="..\..\src\BlazorSquareToolkit.WebPayments\BlazorSquareToolkit.WebPayments.csproj" />
   </ItemGroup>
 
 </Project>

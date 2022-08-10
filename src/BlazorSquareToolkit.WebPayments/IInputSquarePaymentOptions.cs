@@ -1,4 +1,4 @@
-﻿namespace BlazorSquareToolkit;
+﻿namespace BlazorSquareToolkit.WebPayments;
 
 public class InputSquarePaymentOptions
 {

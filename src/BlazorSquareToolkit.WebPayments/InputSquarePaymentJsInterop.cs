@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System.Text.Json;
 
-namespace BlazorSquareToolkit;
+namespace BlazorSquareToolkit.WebPayments;
 
 internal class InputSquarePaymentJsInterop : IAsyncDisposable
 {
@@ -12,7 +12,7 @@ internal class InputSquarePaymentJsInterop : IAsyncDisposable
     public InputSquarePaymentJsInterop(IJSRuntime jsRuntime, DotNetObjectReference<InputSquarePayment> dotnet)
     {
         moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-            "import", "./_content/BlazorSquareToolkit/InputSquarePayment.razor.js").AsTask());
+            "import", "./_content/BlazorSquareToolkit.WebPayments/InputSquarePayment.razor.js").AsTask());
 
         this.dotnetRef = dotnet;
     }

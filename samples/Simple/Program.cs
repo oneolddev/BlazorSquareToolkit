@@ -1,5 +1,5 @@
 using Simple;
-using BlazorSquareToolkit;
+using BlazorSquareToolkit.WebPayments;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 

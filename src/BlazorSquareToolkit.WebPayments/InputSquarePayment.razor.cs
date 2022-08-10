@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BlazorSquareToolkit
+namespace BlazorSquareToolkit.WebPayments
 {
     public partial class InputSquarePayment
     {
