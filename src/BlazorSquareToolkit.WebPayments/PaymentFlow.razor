@@ -1,0 +1,17 @@
+<div>
+    <CascadingValue Value="@PaymentFlowState">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+    public enum State
+    {
+        Pending, Processing, Complete
+    }
+
+    public State PaymentFlowState { get; set; } = State.Pending;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

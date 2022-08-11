@@ -1,0 +1,14 @@
+<div>
+    @if (PaymentFlowState == PaymentFlow.State.Complete)
+    {
+        @ChildContent
+    }
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [CascadingParameter]
+    public PaymentFlow.State PaymentFlowState { get; set; }
+}
