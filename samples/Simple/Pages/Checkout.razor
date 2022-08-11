@@ -5,68 +5,69 @@
 
 <h3>Checkout</h3>
 <div id="checkout">
-    @if (state == CheckoutState.Unpaid)
-    {
-        <CheckoutInfo></CheckoutInfo>
-        <EditForm Model="@paymentFormData" OnSubmit="@HandleSubmit">
-            <div>
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+    <PaymentFlow @ref=@paymentFlow>
+        <PaymentPending>
+            <div id="payment-pending">
+                <CheckoutInfo></CheckoutInfo>
+                <EditForm Model="@paymentFormData" OnSubmit="@HandlePaymentSubmit">
+                    <div>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
 
-                <InputSquarePayment @ref="inputSquarePayment" @bind-Value="paymentFormData.Nonce" />
+                        <InputSquarePayment @bind-Value="paymentFormData.Nonce" @ref="inputSquarePayment" />
 
+                    </div>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </EditForm>
             </div>
-            <button class="btn btn-primary" type="submit">Submit</button>
-        </EditForm>
-    }
-    else if (state == CheckoutState.Processing)
-    {
-        <div>
-            <div>Processing</div>
-            <div>
+        </PaymentPending>
+        <PaymentProcessing>
+            <div id="payment-processing">
+                <div>Processing payment</div>
                 <div class="spinner-border"></div>
+                <div>@ProcessingMessage</div>
             </div>
-            <div>@ProcessingMessage</div>
-        </div>
-    }
-    else
-    {
-        <div>
-            <div>Paid</div>
-        </div>
-    }
+        </PaymentProcessing>
+        <PaymentComplete>
+            <div id="payment-complete">
+                <div>Thank you for your payment.</div>
+            </div>
+        </PaymentComplete>
+    </PaymentFlow>
 </div>
 
 @code {
-    enum CheckoutState { Unpaid, Processing, Paid };
-    CheckoutState state = CheckoutState.Unpaid;
+    InputSquarePayment? inputSquarePayment;
+    PaymentFlow? paymentFlow;
 
-    InputSquarePayment inputSquarePayment = default!;
+    string? ProcessingMessage;
 
-    public string ProcessingMessage { get; set; } = string.Empty;
-
-    async Task HandleSubmit(EditContext editContext)
+    async Task HandlePaymentSubmit(EditContext editContext)
     {
         if (editContext.Validate())
         {
-            state = CheckoutState.Processing;
-            var r = await inputSquarePayment.Tokenize();
-            if (r != null && r.IsValid())
+            paymentFlow.PaymentFlowState = PaymentFlow.State.Processing;
+
+            ProcessingMessage = "Retrieving token";
+            StateHasChanged();
+
+            var tokenizeResponse = await inputSquarePayment.Tokenize();
+            if (tokenizeResponse != null && tokenizeResponse.IsValid())
             {
-                var card = r.Details?.Card!;
-                ProcessingMessage = $"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpYear} and Ending in {card.Last4}";
+                var card = tokenizeResponse.Details?.Card!;
+                ProcessingMessage = $"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpMonth} and Ending in {card.Last4}";
                 StateHasChanged();
+
+                // send payment request to backend
                 await Task.Delay(5000);
-                state = CheckoutState.Paid;
+
+                //
+                paymentFlow.PaymentFlowState = PaymentFlow.State.Complete;
             }
             else
             {
-                state = CheckoutState.Unpaid;
+                ProcessingMessage = "Unable to process payments at this time. Please retry later.";
             }
-        }
-        else
-        {
-
         }
     }
 
@@ -74,10 +75,6 @@
 
     public class PaymentFormData
     {
-        //[Required]
-        //[StringLength(10, ErrorMessage = "Name must be between 2 and 10 characters.", MinimumLength = 2)]
-        //public string? Name { get; set; }
-
         [Required(ErrorMessage = "Card information must be completed.")]
         public string Nonce { get; set; } = string.Empty;
     }

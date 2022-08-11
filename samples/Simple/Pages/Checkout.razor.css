@@ -3,22 +3,36 @@
     max-width: 32em;
 }
 
-    #checkout > form > div {
-        padding: 0.5em 0 0.5em 0;
-        margin: auto;
-    }
+#payment-pending {
+    border: 1px solid lightgray;
+    padding: 1em;
+}
 
-    #checkout > form > button {
-        margin: 0 auto;
+    #payment-pending form button {
         display: block;
+        margin: 1em auto 0em;
     }
 
-    #checkout > div {
-        border: 1px solid lightgray;
-        padding: 0.5em;
+#payment-processing {
+    border: 1px solid lightgray;
+    padding: 1em;
+}
+
+    #payment-processing div {
+        display: block;
+        padding: 0.25em;
+        margin: 0 auto;
+        text-align: center;
     }
 
-        #checkout > div > div {
-            margin: 5px auto;
-            text-align: center;
-        }
+#payment-complete {
+    border: 1px solid lightgray;
+    padding: 1em;
+}
+
+    #payment-complete div {
+        display: block;
+        padding: 0.25em;
+        margin: 0 auto;
+        text-align: center;
+    }
