@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Version>1.0.0-preview.1.0</Version>
+		<Version>1.0.0-preview.1.2</Version>
 		<GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
 		<Authors>Gary Chan</Authors>
 		<PackageId>BlazorSquareToolkit.WebPayments</PackageId>
