@@ -8,7 +8,6 @@ namespace BlazorSquareToolkit.WebPayments
     {
         [Parameter]
         public string Nonce { get; set; } = default !;
-        ElementReference InputReference;
         [Inject]
         InputSquarePaymentOptions options { get; set; } = default !;
         [Inject]
