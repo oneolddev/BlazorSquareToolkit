@@ -10,7 +10,7 @@ export function initialize(environment, applicationId, locationId, dotnetRef) {
         exports => {
             console.log('  Square SDK loaded - ' + '\'' + environment + '\'');
 
-            card = new Card('card-container');
+            card = new Card('inputsquarepayment-container');
             card.initialize(applicationId, locationId);
 
             DotNetRef.setReference(dotnetRef);

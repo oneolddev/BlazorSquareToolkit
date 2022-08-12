@@ -36,3 +36,10 @@
         margin: 0 auto;
         text-align: center;
     }
+
+::deep #inputsquarepayment-container {
+    padding: 0.5em;
+    border: 1px solid lightgray;
+    border-radius: .25em;
+    background-color: var(--bs-gray-200);
+}
