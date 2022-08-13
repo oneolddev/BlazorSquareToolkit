@@ -37,8 +37,8 @@
 </div>
 
 @code {
-    InputSquarePayment inputSquarePayment = default!;
-    PaymentFlow paymentFlow = default!;
+    InputSquarePayment? inputSquarePayment;
+    PaymentFlow? paymentFlow;
 
     string? ProcessingMessage;
 
@@ -46,12 +46,12 @@
     {
         if (editContext.Validate())
         {
-            paymentFlow.PaymentFlowState = PaymentFlow.State.Processing;
+            paymentFlow!.PaymentFlowState = PaymentFlow.State.Processing;
 
             ProcessingMessage = "Retrieving token";
             StateHasChanged();
 
-            var tokenizeResponse = await inputSquarePayment.Tokenize();
+            var tokenizeResponse = await inputSquarePayment!.Tokenize();
             if (tokenizeResponse != null && tokenizeResponse.IsValid())
             {
                 var card = tokenizeResponse.Details?.Card!;
