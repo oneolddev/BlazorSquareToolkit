@@ -1,7 +1,111 @@
 ﻿@page "/donate"
+@using System.ComponentModel.DataAnnotations
+@using BlazorSquareToolkit.WebPayments
 
 <h3>Donation</h3>
 
-@code {
+<div id="payment-flow">
+    <PaymentFlow @ref=@paymentFlow>
+        <PaymentPending>
+            <div id="payment-pending">
+                <EditForm Model="@paymentFormData" OnSubmit="@HandlePaymentSubmit">
+                    <div>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div id="donation-details">
+                            <div class="donation-selector">
+                                <InputRadioGroup @bind-Value="paymentFormData.Amount">
+                                    @foreach (var amount in DonationsAmounts)
+                                    {
+                                        <div>
+                                            <InputRadio Value="amount" id="@amount" />
+                                            <label for=@amount><div>Donate</div><div>@amount.ToString("C")</div></label>
+                                        </div>
+                                    }
+                                </InputRadioGroup>
+                            </div>
+                            <InputText @bind-Value="paymentFormData.Email" placeholder="Email for receipt." />
+                            <InputTextArea @bind-Value="paymentFormData.Message" placeholder="Feedback" />
+                        </div>
+                        <div id="creditcard">
+                            <InputText @bind-Value="paymentFormData.Name" placeholder="Cardholder Name" />
+                            <InputSquarePayment @bind-Value="paymentFormData.Nonce" @ref="inputSquarePayment" />
+                        </div>
 
+                    </div>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </EditForm>
+            </div>
+        </PaymentPending>
+        <PaymentProcessing>
+            <div id="payment-processing">
+                <div>Processing payment</div>
+                <div class="spinner-border"></div>
+                <div>@ProcessingMessage</div>
+            </div>
+        </PaymentProcessing>
+        <PaymentComplete>
+            <div id="payment-complete">
+                <div>Thank you for your donation.</div>
+            </div>
+        </PaymentComplete>
+    </PaymentFlow>
+</div>
+
+@code {
+    InputSquarePayment? inputSquarePayment;
+    PaymentFlow? paymentFlow;
+
+    string? ProcessingMessage;
+
+    int[] DonationsAmounts = new int[] { 5, 10, 20 };
+
+    async Task HandlePaymentSubmit(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            paymentFlow.PaymentFlowState = PaymentFlow.State.Processing;
+
+            ProcessingMessage = "Retrieving token";
+            StateHasChanged();
+
+            var tokenizeResponse = await inputSquarePayment.Tokenize();
+            if (tokenizeResponse != null && tokenizeResponse.IsValid())
+            {
+                var card = tokenizeResponse.Details?.Card!;
+                ProcessingMessage = $"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpMonth} and Ending in {card.Last4}\r\n{paymentFormData.Name}";
+                StateHasChanged();
+
+                // send payment request to backend
+                await Task.Delay(5000);
+
+                //
+                paymentFlow.PaymentFlowState = PaymentFlow.State.Complete;
+            }
+            else
+            {
+                ProcessingMessage = "Unable to process payments at this time. Please retry later.";
+            }
+        }
+    }
+
+    PaymentFormData paymentFormData = new();
+
+    public class PaymentFormData
+    {
+        [Required(ErrorMessage = "Donation Amount must be selected.")]
+        public int? Amount { get; set; }
+
+        [EmailAddress(ErrorMessage = "Email address is not valid")]
+        public string? Email { get; set; }
+
+        public string? Message { get; set; }
+
+        [Required(ErrorMessage = "Cardholder name is required.")]
+        [StringLength(64, ErrorMessage = "Cardholder name must be less than 64 charaters.")]
+        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Card information must be completed.")]
+        public string Nonce { get; set; } = string.Empty;
+    }
 }

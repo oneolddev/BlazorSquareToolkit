@@ -1,0 +1,154 @@
+﻿#payment-flow {
+    margin: auto;
+    max-width: 40em;
+}
+
+#payment-pending {
+}
+
+    #payment-pending form button {
+        display: block;
+        margin: 1em auto 0em;
+    }
+
+#payment-processing {
+}
+
+    #payment-processing div {
+        display: block;
+        padding: 0.25em;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+#payment-complete {
+}
+
+    #payment-complete div {
+        display: block;
+        padding: 0.25em;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+#donation-details {
+    border-radius: 0.5em;
+    margin: 0.25em auto;
+    padding: 0.5em;
+}
+
+.donation-selector {
+    border: 0px solid lightgray;
+    border-radius: 0.25em;
+    margin: 0.25em auto 1em;
+    padding: 0.5em;
+    display: flex;
+    justify-content: space-around;
+}
+
+    .donation-selector > div {
+        margin-right: 15px;
+    }
+
+    .donation-selector ::deep label {
+        border: 1px solid silver;
+        border-radius: 0.25em;
+        padding: 0.25em;
+        cursor: pointer;
+    }
+
+        .donation-selector ::deep label > div {
+            text-align: center;
+        }
+
+            .donation-selector ::deep label > div:first-child {
+                font-size: smaller;
+                text-align: center;
+            }
+
+    .donation-selector ::deep input[type=radio] {
+        visibility: hidden;
+    }
+
+    .donation-selector ::deep input:checked + label {
+        background: var(--bs-gray-300);
+    }
+
+
+::deep textarea {
+    border: 1px solid lightgray;
+    border-radius: 0.25em;
+    width: 100%;
+    padding: 0.5em;
+    margin: 0.25em auto;
+}
+
+    ::deep textarea:focus {
+        border: 2px solid #006aff;
+        outline: unset;
+    }
+
+#creditcard {
+    border-radius: 0.5em;
+    padding: 0.5em;
+    background-color: var(--bs-gray-200);
+}
+
+::deep #inputsquarepayment-container {
+    margin-top: 0.25em;
+    height: 6.3em;
+    clip-path: inset(0 0 0 round 0.25em)
+}
+
+@media screen and (min-width:549px) {
+    ::deep #inputsquarepayment-container {
+        height: 3.2em;
+    }
+}
+
+@media screen and (min-width:641px) {
+    ::deep #inputsquarepayment-container {
+        height: 6.3em;
+    }
+}
+
+@media screen and (min-width:807px) {
+    ::deep #inputsquarepayment-container {
+        height: 3.2em;
+    }
+}
+
+::deep input {
+    border: 1px solid lightgray;
+    border-radius: 0.25em;
+    padding: 0.5em 0.5em;
+    margin: 0.25em auto;
+}
+
+    ::deep input.valid.modified {
+        outline: unset;
+    }
+
+    ::deep input:focus {
+        border: 2px solid #006aff;
+        outline: unset;
+    }
+
+    ::deep input.invalid {
+        outline: unset;
+    }
+
+        ::deep input.invalid.modified {
+            border: 2px solid #cc0023;
+            outline: unset;
+            color: red;
+        }
+
+    ::deep input:not([type=radio]) {
+        width: 100%;
+    }
+
+
+::deep ::placeholder {
+    color: darkgray;
+}

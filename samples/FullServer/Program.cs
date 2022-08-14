@@ -1,6 +1,7 @@
 using FullServer.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using BlazorSquareToolkit.WebPayments;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+
+builder.Services.AddSingleton<InputSquarePaymentOptions>(
+    sp =>
+    {
+        var options = new InputSquarePaymentOptions();
+        builder.Configuration.GetSection(InputSquarePaymentOptions.Square).Bind(options);
+        return options;
+    });
 
 var app = builder.Build();
 
