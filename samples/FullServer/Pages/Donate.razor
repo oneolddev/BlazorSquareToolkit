@@ -64,12 +64,12 @@
     {
         if (editContext.Validate())
         {
-            paymentFlow.PaymentFlowState = PaymentFlow.State.Processing;
+            paymentFlow!.PaymentFlowState = PaymentFlow.State.Processing;
 
             ProcessingMessage = "Retrieving token";
             StateHasChanged();
 
-            var tokenizeResponse = await inputSquarePayment.Tokenize();
+            var tokenizeResponse = await inputSquarePayment!.Tokenize();
             if (tokenizeResponse != null && tokenizeResponse.IsValid())
             {
                 var card = tokenizeResponse.Details?.Card!;
