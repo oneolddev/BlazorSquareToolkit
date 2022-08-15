@@ -18,8 +18,8 @@
                                     @foreach (var amount in DonationsAmounts)
                                     {
                                         <div>
-                                            <InputRadio Value="amount" id="@amount" />
-                                            <label for=@amount><div>Donate</div><div>@amount.ToString("C")</div></label>
+                                            <InputRadio Value="amount" id=@RadioLabel(amount) />
+                                            <label for=@RadioLabel(amount)><div>Donate</div><div>@amount.ToString("C")</div></label>
                                         </div>
                                     }
                                 </InputRadioGroup>
@@ -62,6 +62,8 @@
     List<string> ProcessingMessages = new List<string>();
 
     int[] DonationsAmounts = new int[] { 5, 10, 20 };
+
+    Func<int, string> RadioLabel = i => "dr-" + i.ToString();
 
     async Task HandlePaymentSubmit(EditContext editContext)
     {
