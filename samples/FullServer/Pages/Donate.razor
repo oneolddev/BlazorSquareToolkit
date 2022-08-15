@@ -8,13 +8,13 @@
     <PaymentFlow @ref=@paymentFlow>
         <PaymentPending>
             <div id="payment-pending">
-                <EditForm Model="@paymentFormData" OnSubmit="@HandlePaymentSubmit">
+                <EditForm Model="@donationFormData" OnSubmit="@HandlePaymentSubmit">
                     <div>
                         <DataAnnotationsValidator />
                         <ValidationSummary />
                         <div id="donation-details">
                             <div class="donation-selector">
-                                <InputRadioGroup @bind-Value="paymentFormData.Amount">
+                                <InputRadioGroup @bind-Value="donationFormData.Amount">
                                     @foreach (var amount in DonationsAmounts)
                                     {
                                         <div>
@@ -24,12 +24,12 @@
                                     }
                                 </InputRadioGroup>
                             </div>
-                            <InputText @bind-Value="paymentFormData.Email" placeholder="Email for receipt." />
-                            <InputTextArea @bind-Value="paymentFormData.Message" placeholder="Feedback" />
+                            <InputText @bind-Value="donationFormData.Email" placeholder="Email for receipt." />
+                            <InputTextArea @bind-Value="donationFormData.Message" placeholder="Feedback" />
                         </div>
                         <div id="creditcard">
-                            <InputText @bind-Value="paymentFormData.Name" placeholder="Cardholder Name" />
-                            <InputSquarePayment @bind-Value="paymentFormData.Nonce" @ref="inputSquarePayment" />
+                            <InputText @bind-Value="donationFormData.Name" placeholder="Cardholder Name" />
+                            <InputSquarePayment @bind-Value="donationFormData.Nonce" @ref="inputSquarePayment" />
                         </div>
 
                     </div>
@@ -81,7 +81,7 @@
                 ProcessingMessages.Clear();
                 ProcessingMessages.Add($"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpMonth} and Ending in {card.Last4}");
                 ProcessingMessages.Add("for");
-                ProcessingMessages.Add($"Donation of ${paymentFormData.Amount}.00 by {paymentFormData.Name}");
+                ProcessingMessages.Add($"Donation of ${donationFormData.Amount}.00 by {donationFormData.Name}");
                 StateHasChanged();
 
                 // send payment request to backend
@@ -97,9 +97,9 @@
         }
     }
 
-    PaymentFormData paymentFormData = new();
+    DonationFormData donationFormData = new();
 
-    public class PaymentFormData
+    public class DonationFormData
     {
         [Required(ErrorMessage = "Donation Amount must be selected.")]
         public int? Amount { get; set; }
