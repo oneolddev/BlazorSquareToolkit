@@ -2,7 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @using BlazorSquareToolkit.WebPayments
 
-<h3>Donation</h3>
+<h1>Donation</h1>
 
 <div id="payment-flow">
     <PaymentFlow @ref=@paymentFlow>
@@ -41,7 +41,10 @@
             <div id="payment-processing">
                 <div>Processing payment</div>
                 <div class="spinner-border"></div>
-                <div>@ProcessingMessage</div>
+                @foreach (var msg in ProcessingMessages)
+                {
+                    <div>@msg</div>
+                }
             </div>
         </PaymentProcessing>
         <PaymentComplete>
@@ -56,7 +59,7 @@
     InputSquarePayment? inputSquarePayment;
     PaymentFlow? paymentFlow;
 
-    string? ProcessingMessage;
+    List<string> ProcessingMessages = new List<string>();
 
     int[] DonationsAmounts = new int[] { 5, 10, 20 };
 
@@ -66,14 +69,17 @@
         {
             paymentFlow!.PaymentFlowState = PaymentFlow.State.Processing;
 
-            ProcessingMessage = "Retrieving token";
+            ProcessingMessages.Add("Retrieving token");
             StateHasChanged();
 
             var tokenizeResponse = await inputSquarePayment!.Tokenize();
             if (tokenizeResponse != null && tokenizeResponse.IsValid())
             {
                 var card = tokenizeResponse.Details?.Card!;
-                ProcessingMessage = $"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpMonth} and Ending in {card.Last4}\r\n{paymentFormData.Name}";
+                ProcessingMessages.Clear();
+                ProcessingMessages.Add($"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpMonth} and Ending in {card.Last4}");
+                ProcessingMessages.Add("for");
+                ProcessingMessages.Add($"Donation of ${paymentFormData.Amount}.00 by {paymentFormData.Name}");
                 StateHasChanged();
 
                 // send payment request to backend
@@ -84,7 +90,7 @@
             }
             else
             {
-                ProcessingMessage = "Unable to process payments at this time. Please retry later.";
+                ProcessingMessages.Add("Unable to process payments at this time. Please retry later.");
             }
         }
     }
