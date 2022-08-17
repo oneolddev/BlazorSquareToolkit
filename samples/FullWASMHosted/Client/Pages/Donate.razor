@@ -1,7 +1,119 @@
 ﻿@page "/donate"
+@using System.ComponentModel.DataAnnotations
+@using BlazorSquareToolkit.WebPayments
 
-<h3>Donation</h3>
+<h1>Donation</h1>
+
+<div id="payment-flow">
+    <PaymentFlow @ref=@paymentFlow>
+        <PaymentPending>
+            <div id="payment-pending">
+                <EditForm Model="@donationFormData" OnSubmit="@HandlePaymentSubmit">
+                    <div>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div id="donation-details">
+                            <div class="donation-selector">
+                                <InputRadioGroup @bind-Value="donationFormData.Amount">
+                                    @foreach (var amount in DonationsAmounts)
+                                    {
+                                        <div>
+                                            <InputRadio Value="amount" id=@RadioLabel(amount) />
+                                            <label for=@RadioLabel(amount)><div>Donate</div><div>@amount.ToString("C")</div></label>
+                                        </div>
+                                    }
+                                </InputRadioGroup>
+                            </div>
+                            <InputText @bind-Value="donationFormData.Email" placeholder="Email for receipt." />
+                            <InputTextArea @bind-Value="donationFormData.Message" placeholder="Feedback" />
+                        </div>
+                        <div id="creditcard">
+                            <InputText @bind-Value="donationFormData.Name" placeholder="Cardholder Name" />
+                            <InputSquarePayment @bind-Value="donationFormData.Nonce" @ref="inputSquarePayment" />
+                        </div>
+
+                    </div>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </EditForm>
+            </div>
+        </PaymentPending>
+        <PaymentProcessing>
+            <div id="payment-processing">
+                <div>Processing payment</div>
+                <div class="spinner-border"></div>
+                @foreach (var msg in ProcessingMessages)
+                {
+                    <div>@msg</div>
+                }
+            </div>
+        </PaymentProcessing>
+        <PaymentComplete>
+            <div id="payment-complete">
+                <div>Thank you for your donation.</div>
+            </div>
+        </PaymentComplete>
+    </PaymentFlow>
+</div>
 
 @code {
+    InputSquarePayment? inputSquarePayment;
+    PaymentFlow? paymentFlow;
 
+    List<string> ProcessingMessages = new List<string>();
+
+    int[] DonationsAmounts = new int[] { 5, 10, 20 };
+
+    Func<int, string> RadioLabel = i => "dr-" + i.ToString();
+
+    async Task HandlePaymentSubmit(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            paymentFlow!.PaymentFlowState = PaymentFlow.State.Processing;
+
+            ProcessingMessages.Add("Retrieving token");
+            StateHasChanged();
+
+            var tokenizeResponse = await inputSquarePayment!.Tokenize();
+            if (tokenizeResponse != null && tokenizeResponse.IsValid())
+            {
+                var card = tokenizeResponse.Details?.Card!;
+                ProcessingMessages.Clear();
+                ProcessingMessages.Add($"{card.Brand} with Exp:{card.ExpMonth}/{card.ExpMonth} and Ending in {card.Last4}");
+                ProcessingMessages.Add("for");
+                ProcessingMessages.Add($"Donation of ${donationFormData.Amount}.00 by {donationFormData.Name}");
+                StateHasChanged();
+
+                // send payment request to backend
+                await Task.Delay(5000);
+
+                //
+                paymentFlow.PaymentFlowState = PaymentFlow.State.Complete;
+            }
+            else
+            {
+                ProcessingMessages.Add("Unable to process payments at this time. Please retry later.");
+            }
+        }
+    }
+
+    DonationFormData donationFormData = new();
+
+    public class DonationFormData
+    {
+        [Required(ErrorMessage = "Donation Amount must be selected.")]
+        public int? Amount { get; set; }
+
+        [EmailAddress(ErrorMessage = "Email address is not valid")]
+        public string? Email { get; set; }
+
+        public string? Message { get; set; }
+
+        [Required(ErrorMessage = "Cardholder name is required.")]
+        [StringLength(64, ErrorMessage = "Cardholder name must be less than 64 charaters.")]
+        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Card information must be completed.")]
+        public string Nonce { get; set; } = string.Empty;
+    }
 }
