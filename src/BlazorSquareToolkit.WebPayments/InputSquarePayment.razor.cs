@@ -9,7 +9,7 @@ namespace BlazorSquareToolkit.WebPayments
         [Parameter]
         public string Nonce { get; set; } = default !;
         [Inject]
-        InputSquarePaymentOptions options { get; set; } = default !;
+        IInputSquarePaymentOptionsService optionsService { get; set; } = default !;
         [Inject]
         IJSRuntime JsRuntime { get; set; } = default !;
         InputSquarePaymentJsInterop JsInterop { get; set; } = default !;
@@ -18,6 +18,7 @@ namespace BlazorSquareToolkit.WebPayments
             if (firstRender)
             {
                 JsInterop = new InputSquarePaymentJsInterop(JsRuntime, DotNetObjectReference.Create(this));
+                var options = await optionsService.GetOptionsAsync();
                 await JsInterop.Initialize(options);
             }
         }
