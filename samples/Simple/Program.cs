@@ -9,12 +9,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-builder.Services.AddScoped<InputSquarePaymentOptions>(
-    sp =>
-    {
-        var options = new InputSquarePaymentOptions();
-        builder.Configuration.GetSection(InputSquarePaymentOptions.Square).Bind(options);
-        return options;
-    });
+builder.Services.AddScoped<IInputSquarePaymentOptionsService, InputSquarePaymentOptionsService>();
 
 await builder.Build().RunAsync();
